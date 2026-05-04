@@ -8,12 +8,17 @@ def detect_task(text: str) -> str:
     if not text_lower:
         return "UNKNOWN"
 
-    # 1. Check for Drafting first as it's often a specific request
-    if any(word in text_lower for word in ["draft", "write", "create a notice", "legal notice"]):
+    # 1. Check for Contract keywords first, especially if it's a long document
+    contract_keywords = ["agreement", "contract", "nda", "clause", "terms and conditions", "hereby", "party of the first part"]
+    if any(keyword in text_lower for keyword in contract_keywords) and len(text.split()) > 20:
+        return "CONTRACT ANALYSIS"
+
+    # 2. Check for Drafting (usually starting with a command)
+    drafting_commands = ["draft", "write", "create a notice", "legal notice"]
+    if any(word in text_lower[:50] for word in drafting_commands):
         return "LEGAL DRAFTING"
 
-    # 2. Check for Contract keywords
-    contract_keywords = ["agreement", "contract", "nda", "clause", "terms and conditions", "hereby", "party of the first part"]
+    # 3. Fallback for shorter contract mentions
     if any(keyword in text_lower for keyword in contract_keywords):
         return "CONTRACT ANALYSIS"
 
