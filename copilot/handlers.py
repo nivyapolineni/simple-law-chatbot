@@ -1,4 +1,56 @@
+import json
+import os
 from typing import Dict, Any
+
+MATTERS_FILE = "matters.json"
+
+def _load_matters():
+    if os.path.exists(MATTERS_FILE):
+        with open(MATTERS_FILE, 'r') as f:
+            try:
+                return json.load(f)
+            except json.JSONDecodeError:
+                return {}
+    return {}
+
+def _save_matters(matters):
+    with open(MATTERS_FILE, 'w') as f:
+        json.dump(matters, f, indent=4)
+
+def handle_matter_management(text: str) -> Dict[str, Any]:
+    """
+    Handles creation and retrieval of legal matters.
+    """
+    text_lower = text.lower()
+    matters = _load_matters()
+
+    if "create matter" in text_lower or "new matter" in text_lower:
+        # Simple parser for "create matter [name] with details [details]"
+        name = "Untitled Matter"
+        details = "No details provided."
+
+        if "matter" in text_lower:
+            parts = text.split("matter", 1)[1].strip().split("with details", 1)
+            name = parts[0].strip() or name
+            if len(parts) > 1:
+                details = parts[1].strip()
+
+        matters[name] = {
+            "name": name,
+            "details": details,
+            "status": "Open"
+        }
+        _save_matters(matters)
+        return {"action": "CREATE", "matter": matters[name]}
+
+    elif "open matter" in text_lower or "view matter" in text_lower:
+        name = text.split("matter", 1)[1].strip() if "matter" in text_lower else ""
+        if name in matters:
+            return {"action": "OPEN", "matter": matters[name]}
+        else:
+            return {"action": "ERROR", "message": f"Matter '{name}' not found."}
+
+    return {"action": "ERROR", "message": "Could not understand matter command."}
 
 def handle_contract_analysis(text: str) -> Dict[str, Any]:
     """

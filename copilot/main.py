@@ -5,7 +5,8 @@ from copilot.handlers import (
     handle_legal_qa,
     handle_summarization,
     handle_legal_drafting,
-    handle_simple_explanation
+    handle_simple_explanation,
+    handle_matter_management
 )
 from copilot.formatter import format_output
 
@@ -20,7 +21,9 @@ def run_copilot(user_input: str):
     data = None
     simple_explanation = None
 
-    if task_type == "CONTRACT ANALYSIS":
+    if task_type == "MATTER MANAGEMENT":
+        data = handle_matter_management(user_input)
+    elif task_type == "CONTRACT ANALYSIS":
         data = handle_contract_analysis(user_input)
     elif task_type == "LEGAL Q&A":
         data = handle_legal_qa(user_input)

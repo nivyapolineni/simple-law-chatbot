@@ -30,6 +30,18 @@ def format_output(task_type: str, data: Any, simple_explanation: str = None) -> 
         output += "Key Points:\n" + "\n".join([f"- {p}" for p in data['Key Points']]) + "\n\n"
         output += f"Implications:\n{data['Implications']}"
 
+    elif task_type == "MATTER MANAGEMENT":
+        if data["action"] == "CREATE":
+            output += f"Summary:\nNew matter created successfully.\n\n"
+            output += f"Key Points:\n- Name: {data['matter']['name']}\n- Status: {data['matter']['status']}\n\n"
+            output += f"Details:\n{data['matter']['details']}"
+        elif data["action"] == "OPEN":
+            output += f"Summary:\nMatter retrieved successfully.\n\n"
+            output += f"Key Points:\n- Name: {data['matter']['name']}\n- Status: {data['matter']['status']}\n\n"
+            output += f"Details:\n{data['matter']['details']}"
+        else:
+            output += f"Error:\n{data.get('message', 'An error occurred.')}"
+
     elif task_type == "LEGAL DRAFTING":
         output += "Summary:\nDrafting a formal legal notice based on the provided request.\n\n"
         output += "Key Points:\n- Formal professional tone\n- Clear sender and recipient identification\n- Explicit legal basis and demand\n\n"

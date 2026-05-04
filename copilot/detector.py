@@ -8,6 +8,10 @@ def detect_task(text: str) -> str:
     if not text_lower:
         return "UNKNOWN"
 
+    # 0. Check for Matter Management
+    if any(phrase in text_lower for phrase in ["create matter", "open matter", "new matter", "view matter"]):
+        return "MATTER MANAGEMENT"
+
     # 1. Check for Contract keywords first, especially if it's a long document
     contract_keywords = ["agreement", "contract", "nda", "clause", "terms and conditions", "hereby", "party of the first part"]
     if any(keyword in text_lower for keyword in contract_keywords) and len(text.split()) > 20:
